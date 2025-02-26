@@ -9,7 +9,7 @@ import thirdwheel.user.repository.UserRepository;
 
 @Service
 @RequiredArgsConstructor
-public class UesrService {
+public class UserService {
     private final UserRepository userRepository;
 
     public void createUser(UserRegistrationRequest userRegistrationRequest) {

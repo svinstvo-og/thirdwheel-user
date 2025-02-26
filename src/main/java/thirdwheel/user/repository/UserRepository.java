@@ -9,6 +9,6 @@ import thirdwheel.user.entity.User;
 public interface UserRepository extends JpaRepository<User, Long> {
     public User findByUId(Long uId)
             throws EmptyResultDataAccessException;
-    public User findByEmai(String emai)
-        throws EmptyResultDataAccessException;
+    public User findByEmai(String emai);
+        //throws EmptyResultDataAccessException;
 }

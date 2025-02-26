@@ -13,5 +13,5 @@ public class UserRegistrationRequest {
     private String Fname;
     private String Lname;
     private String email;
-    private String pwdHash;
+    private String password;
 }
