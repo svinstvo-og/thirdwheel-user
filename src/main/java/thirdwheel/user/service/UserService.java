@@ -13,6 +13,13 @@ public class UserService {
     private final UserRepository userRepository;
 
     public void createUser(UserRegistrationRequest userRegistrationRequest) {
-        User user = new User();
+
+        User user = User.builder().Fname(userRegistrationRequest.getFname())
+                .email(userRegistrationRequest.getEmail())
+                .Lname(userRegistrationRequest.getLname())
+                .pwdHash(userRegistrationRequest.getPassword())
+                .build();
+
+        userRepository.save(user);
     }
 }

@@ -2,6 +2,7 @@ package thirdwheel.user.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
@@ -31,18 +32,21 @@ public class UserController {
     @Autowired
     private RoleService roleService;
 
+    private final BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
+
     @PostMapping("/create")
     @ResponseStatus(HttpStatus.CREATED)
     public void createUser(@RequestBody UserRegistrationRequest userRegistrationRequest) {
         if (userRepository.findByEmail(userRegistrationRequest.getEmail()) != null) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "Accout with such email already exists");
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Email already exists");
         }
-        User.builder().Fname(userRegistrationRequest.getFname())
-                .email(userRegistrationRequest.getEmail())
-                .Lname(userRegistrationRequest.getLname())
-                .pwdHash(userRegistrationRequest.getPassword())
-                .build();
+        userRegistrationRequest.setPassword(bCryptPasswordEncoder.encode(userRegistrationRequest.getPassword()));
+
+        userService.createUser(userRegistrationRequest);
     }
 
-
+    @GetMapping("/test")
+    public String test() {
+        return "test";
+    }
 }
