@@ -34,8 +34,8 @@ public class UserController {
     @PostMapping("/create")
     @ResponseStatus(HttpStatus.CREATED)
     public void createUser(@RequestBody UserRegistrationRequest userRegistrationRequest) {
-        if (userRepository.findByEmai(userRegistrationRequest.getEmail()) != null) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "Email already exists");
+        if (userRepository.findByEmail(userRegistrationRequest.getEmail()) != null) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Accout with such email already exists");
         }
         User.builder().Fname(userRegistrationRequest.getFname())
                 .email(userRegistrationRequest.getEmail())
