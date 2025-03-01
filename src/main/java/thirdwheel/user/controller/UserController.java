@@ -38,7 +38,7 @@ public class UserController {
     @ResponseStatus(HttpStatus.CREATED)
     public void createUser(@RequestBody UserRegistrationRequest userRegistrationRequest) {
         if (userRepository.findByEmail(userRegistrationRequest.getEmail()) != null) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "Email already exists");
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Account with such email already exists");
         }
         userRegistrationRequest.setPassword(bCryptPasswordEncoder.encode(userRegistrationRequest.getPassword()));
 
@@ -46,7 +46,6 @@ public class UserController {
     }
 
     @GetMapping("/test")
-    public String test() {
-        return "test";
-    }
+    @ResponseStatus(HttpStatus.OK)
+    public void test() {};
 }
