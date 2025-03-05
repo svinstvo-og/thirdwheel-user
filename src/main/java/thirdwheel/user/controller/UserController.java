@@ -7,6 +7,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import thirdwheel.user.dto.UserRegistrationRequest;
+import thirdwheel.user.dto.UserResponse;
 import thirdwheel.user.entity.User;
 import thirdwheel.user.repository.RoleRepository;
 import thirdwheel.user.repository.UserRepository;
@@ -14,7 +15,9 @@ import thirdwheel.user.repository.UserRoleRepository;
 import thirdwheel.user.service.RoleService;
 import thirdwheel.user.service.UserService;
 
-@Controller
+import java.util.List;
+
+@RestController
 @RequestMapping(value = "/api/user")
 public class UserController {
     @Autowired
@@ -45,7 +48,15 @@ public class UserController {
         userService.createUser(userRegistrationRequest);
     }
 
+    @GetMapping("/get/all")
+    @ResponseStatus(HttpStatus.OK)
+    public List<User> getAllUsers() {
+        return userRepository.findAll();
+    }
+
     @GetMapping("/test")
     @ResponseStatus(HttpStatus.OK)
-    public void test() {};
+    public String test() {
+        return "testik";
+    };
 }

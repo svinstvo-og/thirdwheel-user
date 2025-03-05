@@ -7,6 +7,8 @@ import thirdwheel.user.dto.UserRegistrationRequest;
 import thirdwheel.user.entity.User;
 import thirdwheel.user.repository.UserRepository;
 
+import java.time.LocalDateTime;
+
 @Service
 @RequiredArgsConstructor
 public class UserService {
@@ -14,10 +16,13 @@ public class UserService {
 
     public void createUser(UserRegistrationRequest userRegistrationRequest) {
 
-        User user = User.builder().Fname(userRegistrationRequest.getFname())
+        System.out.println(userRegistrationRequest.getFname() + " + " + userRegistrationRequest.getLname());
+
+        User user = User.builder().fname(userRegistrationRequest.getFname())
                 .email(userRegistrationRequest.getEmail())
-                .Lname(userRegistrationRequest.getLname())
+                .lname(userRegistrationRequest.getLname())
                 .pwdHash(userRegistrationRequest.getPassword())
+                .createdAt(LocalDateTime.now())
                 .build();
 
         userRepository.save(user);

@@ -18,9 +18,9 @@ public class User {
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long uId;
     @Column(unique = false, nullable = false)
-    private String Fname;
+    private String fname;
     @Column(unique = false, nullable = false)
-    private String Lname;
+    private String lname;
     @Column(unique = true, nullable = false)
     private String email;
     private String pwdHash;
