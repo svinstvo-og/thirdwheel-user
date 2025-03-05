@@ -16,6 +16,7 @@ import thirdwheel.user.service.RoleService;
 import thirdwheel.user.service.UserService;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping(value = "/api/user")
@@ -52,6 +53,21 @@ public class UserController {
     @ResponseStatus(HttpStatus.OK)
     public List<User> getAllUsers() {
         return userRepository.findAll();
+    }
+
+    @GetMapping
+    @ResponseStatus(HttpStatus.FOUND)
+    public UserResponse getUser(@RequestBody Long uId) {
+        Optional<User> user = userRepository.findById(uId);
+        if (user.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found");
+        }
+        return UserResponse.builder()
+                .uId(uId)
+                .Fname(user.get().getFname())
+                .Lname(user.get().getLname())
+                .email(user.get().getEmail())
+                .build();
     }
 
     @GetMapping("/test")
