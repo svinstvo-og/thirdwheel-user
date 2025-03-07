@@ -57,7 +57,7 @@ public class UserController {
 
     @GetMapping
     @ResponseStatus(HttpStatus.FOUND)
-    public UserResponse getUser(@RequestBody Long uId) {
+    public UserResponse getUser(@RequestParam Long uId) {
         Optional<User> user = userRepository.findById(uId);
         if (user.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found");
