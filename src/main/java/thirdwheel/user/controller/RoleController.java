@@ -3,6 +3,7 @@ package thirdwheel.user.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import thirdwheel.user.dto.RoleAssighnmentRequest;
 import thirdwheel.user.entity.Role;
 import thirdwheel.user.repository.RoleRepository;
 import thirdwheel.user.repository.UserRepository;
@@ -40,5 +41,10 @@ public class RoleController {
     @ResponseStatus(HttpStatus.OK)
     public List<Role> getAllRoles() {
         return roleRepository.findAll();
+    }
+
+    @PostMapping("/assign-role")
+    public void assignRole(@RequestBody RoleAssighnmentRequest roleAssighnmentRequest) {
+
     }
 }
