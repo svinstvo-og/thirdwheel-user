@@ -7,14 +7,27 @@ import thirdwheel.user.entity.User;
 import thirdwheel.user.entity.UserRole;
 import thirdwheel.user.entity.UserRoleId;
 import thirdwheel.user.repository.RoleRepository;
+import thirdwheel.user.repository.UserRepository;
 import thirdwheel.user.repository.UserRoleRepository;
+
+import java.util.HashSet;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
 public class UserRoleService {
+
+    private final UserRepository userRepository;
+    private final RoleRepository roleRepository;
     private final UserRoleRepository userRoleRepository;
 
     public void assignRoleToUser(Long userId, Long roleId) {
-        UserRoleId userRoleId = new UserRoleId(userId, roleId);
+        User user = userRepository.findById(userId).orElse(null);
+        Role role = roleRepository.findById(roleId).orElse(null);
+
+        //System.out.println(user.toString() + " " + role.toString());
+
+        UserRole userRole = new UserRole(user, role);
+        userRoleRepository.save(userRole);
     }
 }

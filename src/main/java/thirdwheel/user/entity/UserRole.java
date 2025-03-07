@@ -30,6 +30,6 @@ public class UserRole {
     public UserRole(User user, Role role) {
         this.user = user;
         this.role = role;
-        this.id = new UserRoleId(user.getUId(), role.getRId());
+        this.id = new UserRoleId(user.getUId(), role.getRoleId());
     }
 }

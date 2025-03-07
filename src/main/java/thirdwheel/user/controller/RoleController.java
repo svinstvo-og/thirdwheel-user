@@ -5,12 +5,16 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import thirdwheel.user.dto.RoleAssighnmentRequest;
 import thirdwheel.user.entity.Role;
+import thirdwheel.user.entity.User;
+import thirdwheel.user.entity.UserRole;
 import thirdwheel.user.repository.RoleRepository;
 import thirdwheel.user.repository.UserRepository;
 import thirdwheel.user.repository.UserRoleRepository;
 import thirdwheel.user.service.RoleService;
+import thirdwheel.user.service.UserRoleService;
 import thirdwheel.user.service.UserService;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -30,6 +34,8 @@ public class RoleController {
 
     @Autowired
     private RoleService roleService;
+    @Autowired
+    private UserRoleService userRoleService;
 
     @PostMapping("/roles")
     @ResponseStatus(HttpStatus.CREATED)
@@ -45,6 +51,17 @@ public class RoleController {
 
     @PostMapping("/assign-role")
     public void assignRole(@RequestBody RoleAssighnmentRequest roleAssighnmentRequest) {
+        System.out.println("Trying to assign role: " + roleAssighnmentRequest.toString());
+        userRoleService.assignRoleToUser(roleAssighnmentRequest.getUId(), roleAssighnmentRequest.getRId());
+    }
 
+    @GetMapping("/user-roles")
+    public List<Long> getUserRoles(@RequestBody User user) {
+        List<Long> roleIds = new ArrayList<>();
+        //userRoleRepository.findUserRolesByUser(userRepository.findByuId(user.getUId()));
+        for (UserRole userRole : userRoleRepository.findUserRolesByUser(user)) {
+            roleIds.add(userRole.getRole().getRoleId());
+        }
+        return roleIds;
     }
 }
