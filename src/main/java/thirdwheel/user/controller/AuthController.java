@@ -38,21 +38,10 @@ public class AuthController {
     @Autowired
     private UserRoleService userRoleService;
 
-    @Autowired
-    private AuthenticationManager authenticationManager;
-
-    @Autowired
-    private JwtUtil jwtUtil;
-
     @PostMapping("/login")
     @ResponseStatus(HttpStatus.ACCEPTED)
     public String login(@RequestBody UserLoginRequest loginRequest) {
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword()));
-
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-
-        return jwtUtil.generateToken((UserDetails) authentication.getPrincipal());
+        return "";
     }
 
 }
