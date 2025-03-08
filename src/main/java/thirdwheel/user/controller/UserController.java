@@ -38,7 +38,7 @@ public class UserController {
 
     private final BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
 
-    @PostMapping("/create")
+    @PostMapping("/register")
     @ResponseStatus(HttpStatus.CREATED)
     public void createUser(@RequestBody UserRegistrationRequest userRegistrationRequest) {
         if (userRepository.findByEmail(userRegistrationRequest.getEmail()) != null) {
@@ -75,4 +75,8 @@ public class UserController {
     public String test() {
         return "testik";
     };
+
+    @GetMapping("/testik")
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    public String test2() {return "zaza";};
 }
