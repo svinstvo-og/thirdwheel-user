@@ -27,4 +27,9 @@ public class UserService {
 
         userRepository.save(user);
     }
+
+    public void updateUser(User user) {
+        user.setUpdatedAt(LocalDateTime.now());
+        userRepository.save(user);
+    }
 }

@@ -6,6 +6,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
+import thirdwheel.user.dto.PasswordChangeRequest;
 import thirdwheel.user.dto.UserRegistrationRequest;
 import thirdwheel.user.dto.UserResponse;
 import thirdwheel.user.entity.User;
@@ -47,6 +48,18 @@ public class UserController {
         userRegistrationRequest.setPassword(bCryptPasswordEncoder.encode(userRegistrationRequest.getPassword()));
 
         userService.createUser(userRegistrationRequest);
+    }
+
+    @PutMapping("/change-password")
+    @ResponseStatus(HttpStatus.OK)
+    public void changePassword(@RequestBody PasswordChangeRequest passwordChangeRequest) {
+        User user = userRepository.findByuId(passwordChangeRequest.getUId());
+        if (user == null) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Account with such id doesn't exist");
+        }
+
+        user.setPwdHash(bCryptPasswordEncoder.encode(passwordChangeRequest.getNewPassword()));
+        userService.updateUser(user);
     }
 
     @GetMapping("/get/all")
