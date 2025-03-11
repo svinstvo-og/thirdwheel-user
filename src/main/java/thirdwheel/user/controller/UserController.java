@@ -2,6 +2,9 @@ package thirdwheel.user.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -10,9 +13,11 @@ import thirdwheel.user.dto.PasswordChangeRequest;
 import thirdwheel.user.dto.UserRegistrationRequest;
 import thirdwheel.user.dto.UserResponse;
 import thirdwheel.user.entity.User;
+import thirdwheel.user.entity.UserPrincipal;
 import thirdwheel.user.repository.RoleRepository;
 import thirdwheel.user.repository.UserRepository;
 import thirdwheel.user.repository.UserRoleRepository;
+import thirdwheel.user.service.CustomUserDetailsService;
 import thirdwheel.user.service.RoleService;
 import thirdwheel.user.service.UserService;
 
@@ -37,6 +42,12 @@ public class UserController {
     @Autowired
     private RoleService roleService;
 
+    @Autowired
+    private CustomUserDetailsService customUserDetailsService;
+
+    @Autowired
+    private AuthenticationProvider authenticationProvider;
+
     private final BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
 
     @PostMapping("/register")
@@ -49,15 +60,14 @@ public class UserController {
 
         userService.createUser(userRegistrationRequest);
     }
-
+    
     @PutMapping("/change-password")
     @ResponseStatus(HttpStatus.OK)
     public void changePassword(@RequestBody PasswordChangeRequest passwordChangeRequest) {
-        User user = userRepository.findByuId(passwordChangeRequest.getUId());
-        if (user == null) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "Account with such id doesn't exist");
-        }
-
+        Object userPrincipal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        UserPrincipal currentUser = (UserPrincipal) userPrincipal;
+        User user = userRepository.findByEmail(currentUser.getUsername());
+        //System.out.println(passwordChangeRequest.getNewPassword());
         user.setPwdHash(bCryptPasswordEncoder.encode(passwordChangeRequest.getNewPassword()));
         userService.updateUser(user);
     }
@@ -92,4 +102,10 @@ public class UserController {
     @GetMapping("/testik")
     @ResponseStatus(HttpStatus.ACCEPTED)
     public String test2() {return "zaza";};
+
+    public void getPrincipal(@RequestParam Long uId) {
+        userRepository.findById(uId).ifPresent(user -> {
+            UserPrincipal userPrincipal = new UserPrincipal(user);
+        });
+    }
 }
