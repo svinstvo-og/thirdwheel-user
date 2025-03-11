@@ -10,6 +10,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import thirdwheel.user.dto.UserLoginRequest;
+import thirdwheel.user.dto.UserResponse;
+import thirdwheel.user.entity.User;
+import thirdwheel.user.entity.UserPrincipal;
 import thirdwheel.user.repository.RoleRepository;
 import thirdwheel.user.repository.UserRepository;
 import thirdwheel.user.repository.UserRoleRepository;
@@ -42,6 +45,21 @@ public class AuthController {
     @ResponseStatus(HttpStatus.ACCEPTED)
     public String login(@RequestBody UserLoginRequest loginRequest) {
         return "";
+    }
+
+    @GetMapping("current")
+    public String getAuthenticatedUser(){
+        Object userPrincipal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        UserPrincipal currentUser = (UserPrincipal) userPrincipal;
+        User user = userRepository.findByEmail(currentUser.getUsername());
+        UserResponse userResponse = new UserResponse();
+        userResponse.setEmail(user.getEmail());
+        userResponse.setUId(user.getUId());
+        userResponse.setFname(user.getFname());
+        userResponse.setLname(user.getLname());
+        userResponse.setUpdatedAt(user.getUpdatedAt());
+        userResponse.setCreatedAt(user.getCreatedAt());
+        return userResponse.toString();
     }
 
 }
