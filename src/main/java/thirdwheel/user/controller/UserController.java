@@ -50,17 +50,6 @@ public class UserController {
 
     private final BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
 
-    @PostMapping("/register")
-    @ResponseStatus(HttpStatus.CREATED)
-    public void createUser(@RequestBody UserRegistrationRequest userRegistrationRequest) {
-        if (userRepository.findByEmail(userRegistrationRequest.getEmail()) != null) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "Account with such email already exists");
-        }
-        userRegistrationRequest.setPassword(bCryptPasswordEncoder.encode(userRegistrationRequest.getPassword()));
-
-        userService.createUser(userRegistrationRequest);
-    }
-    
     @PutMapping("/change-password")
     @ResponseStatus(HttpStatus.OK)
     public void changePassword(@RequestBody PasswordChangeRequest passwordChangeRequest) {

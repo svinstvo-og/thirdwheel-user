@@ -8,8 +8,11 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 import thirdwheel.user.dto.UserLoginRequest;
+import thirdwheel.user.dto.UserRegistrationRequest;
 import thirdwheel.user.dto.UserResponse;
 import thirdwheel.user.entity.User;
 import thirdwheel.user.entity.UserPrincipal;
@@ -41,11 +44,25 @@ public class AuthController {
     @Autowired
     private UserRoleService userRoleService;
 
+    private final BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
+
     @PostMapping("/login")
     @ResponseStatus(HttpStatus.ACCEPTED)
     public String login(@RequestBody UserLoginRequest loginRequest) {
         return "";
     }
+
+    @PostMapping("/register")
+    @ResponseStatus(HttpStatus.CREATED)
+    public void createUser(@RequestBody UserRegistrationRequest userRegistrationRequest) {
+        if (userRepository.findByEmail(userRegistrationRequest.getEmail()) != null) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Account with such email already exists");
+        }
+        userRegistrationRequest.setPassword(bCryptPasswordEncoder.encode(userRegistrationRequest.getPassword()));
+
+        userService.createUser(userRegistrationRequest);
+    }
+
 
     @GetMapping("current")
     public String getAuthenticatedUser(){
