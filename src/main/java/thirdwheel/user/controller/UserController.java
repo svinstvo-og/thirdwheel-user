@@ -92,6 +92,17 @@ public class UserController {
     @ResponseStatus(HttpStatus.ACCEPTED)
     public String test2(@RequestBody UserRegistrationRequest userRegistrationRequest) {return "zaza";}
 
+    @DeleteMapping
+    @ResponseStatus(HttpStatus.OK)
+    public void deleteUser() {
+        Object userPrincipal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        UserPrincipal currentUser = (UserPrincipal) userPrincipal;
+        User user = userRepository.findByEmail(currentUser.getUsername());
+
+        userRepository.delete(user);
+        System.out.println("User " + user.getEmail() + " deleted");
+    }
+
     public void getPrincipal(@RequestParam Long uId) {
         userRepository.findById(uId).ifPresent(user -> {
             UserPrincipal userPrincipal = new UserPrincipal(user);
