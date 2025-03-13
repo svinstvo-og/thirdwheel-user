@@ -24,7 +24,7 @@ import thirdwheel.user.service.UserRoleService;
 import thirdwheel.user.service.UserService;
 
 @RestController
-@RequestMapping("api/user")
+@RequestMapping(value = "api/user")
 public class AuthController {
     @Autowired
     private UserRepository userRepository;
@@ -62,7 +62,6 @@ public class AuthController {
 
         userService.createUser(userRegistrationRequest);
     }
-
 
     @GetMapping("current")
     public String getAuthenticatedUser(){

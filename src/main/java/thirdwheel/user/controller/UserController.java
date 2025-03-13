@@ -88,9 +88,9 @@ public class UserController {
         return "testik";
     };
 
-    @GetMapping("/testik")
+    @PostMapping("/testik")
     @ResponseStatus(HttpStatus.ACCEPTED)
-    public String test2() {return "zaza";};
+    public String test2(@RequestBody UserRegistrationRequest userRegistrationRequest) {return "zaza";}
 
     public void getPrincipal(@RequestParam Long uId) {
         userRepository.findById(uId).ifPresent(user -> {
