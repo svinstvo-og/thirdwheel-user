@@ -50,7 +50,7 @@ public class UserController {
 
     private final BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
 
-    @PutMapping("/change-password")
+    @PutMapping("/profile/password")
     @ResponseStatus(HttpStatus.OK)
     public void changePassword(@RequestBody PasswordChangeRequest passwordChangeRequest) {
         Object userPrincipal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -59,6 +59,29 @@ public class UserController {
         //System.out.println(passwordChangeRequest.getNewPassword());
         user.setPwdHash(bCryptPasswordEncoder.encode(passwordChangeRequest.getNewPassword()));
         userService.updateUser(user);
+    }
+
+    @PutMapping("profile")
+    @ResponseStatus(HttpStatus.OK)
+    public void changeProfile(@RequestBody User userUpdate) {
+        Object userPrincipal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        UserPrincipal currentUser = (UserPrincipal) userPrincipal;
+        User user = userRepository.findByEmail(currentUser.getUsername());
+
+        if (userUpdate.getEmail() != null) {
+            user.setEmail(userUpdate.getEmail());
+        }
+
+        if (userUpdate.getFname() != null) {
+            user.setFname(userUpdate.getFname());
+        }
+
+        if (userUpdate.getLname() != null) {
+            user.setLname(userUpdate.getLname());
+        }
+
+        userService.updateUser(user);
+        System.out.println(user.getEmail() + " account details updated");
     }
 
     @GetMapping("/get/all")

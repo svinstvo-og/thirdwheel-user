@@ -46,7 +46,7 @@ public class AuthController {
 
     private final BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
 
-    @PostMapping("/login")
+    @GetMapping("/login")
     @ResponseStatus(HttpStatus.ACCEPTED)
     public String login(@RequestBody UserLoginRequest loginRequest) {
         return userService.authenticate(loginRequest);
