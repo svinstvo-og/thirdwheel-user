@@ -2,7 +2,12 @@ package thirdwheel.user.service;
 
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
+import thirdwheel.user.dto.UserLoginRequest;
 import thirdwheel.user.dto.UserRegistrationRequest;
 import thirdwheel.user.entity.Role;
 import thirdwheel.user.entity.User;
@@ -16,6 +21,9 @@ import java.util.Set;
 @Service
 @RequiredArgsConstructor
 public class UserService {
+
+    @Autowired
+    AuthenticationManager authenticationManager;
 
     private final RoleRepository roleRepository;
     private final UserRepository userRepository;
@@ -48,5 +56,15 @@ public class UserService {
     public void updateUser(User user) {
         user.setUpdatedAt(LocalDateTime.now());
         userRepository.save(user);
+    }
+
+    public String authenticate(UserLoginRequest userLoginRequest) {
+        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(userLoginRequest.getEmail(), userLoginRequest.getPassword()));
+
+        if (authentication.isAuthenticated()) {
+            return "Success, " + authentication.getName();
+        }
+
+        return "Failure";
     }
 }

@@ -49,7 +49,7 @@ public class AuthController {
     @PostMapping("/login")
     @ResponseStatus(HttpStatus.ACCEPTED)
     public String login(@RequestBody UserLoginRequest loginRequest) {
-        return "";
+        return userService.authenticate(loginRequest);
     }
 
     @PostMapping("/register")
