@@ -11,6 +11,7 @@ import thirdwheel.user.dto.UserLoginRequest;
 import thirdwheel.user.dto.UserRegistrationRequest;
 import thirdwheel.user.entity.Role;
 import thirdwheel.user.entity.User;
+import thirdwheel.user.jwt.JwtService;
 import thirdwheel.user.repository.RoleRepository;
 import thirdwheel.user.repository.UserRepository;
 
@@ -24,6 +25,9 @@ public class UserService {
 
     @Autowired
     AuthenticationManager authenticationManager;
+
+    @Autowired
+    JwtService jwtService;
 
     private final RoleRepository roleRepository;
     private final UserRepository userRepository;
@@ -58,11 +62,11 @@ public class UserService {
         userRepository.save(user);
     }
 
-    public String authenticate(UserLoginRequest userLoginRequest) {
+    public String verify(UserLoginRequest userLoginRequest) {
         Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(userLoginRequest.getEmail(), userLoginRequest.getPassword()));
 
         if (authentication.isAuthenticated()) {
-            return "Success, " + authentication.getName();
+            return jwtService.generateToken(userLoginRequest.getEmail());
         }
 
         return "Failure";
