@@ -1,12 +1,17 @@
 package thirdwheel.user.controller;
 
 
+import com.fasterxml.jackson.annotation.JsonAlias;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
+import thirdwheel.user.dto.RefreshJwtRequest;
 import thirdwheel.user.dto.UserLoginRequest;
 import thirdwheel.user.dto.UserRegistrationRequest;
 import thirdwheel.user.dto.UserResponse;
@@ -15,9 +20,12 @@ import thirdwheel.user.entity.UserPrincipal;
 import thirdwheel.user.repository.RoleRepository;
 import thirdwheel.user.repository.UserRepository;
 import thirdwheel.user.repository.UserRoleRepository;
-import thirdwheel.user.service.RoleService;
-import thirdwheel.user.service.UserRoleService;
-import thirdwheel.user.service.UserService;
+import thirdwheel.user.service.*;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping(value = "api/user")
@@ -40,15 +48,24 @@ public class AuthController {
     @Autowired
     private UserRoleService userRoleService;
 
+    @Autowired
+    private RefreshTokenService refreshTokenService;
+
+    @Autowired
+    private ApplicationContext applicationContext;
+
+    @Autowired
+    private JwtService jwtService;
+
     private final BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
 
     @GetMapping("/login")
     @ResponseStatus(HttpStatus.ACCEPTED)
-    public String login(@RequestBody UserLoginRequest loginRequest) {
-
-
-
-        return userService.verify(loginRequest);
+    public Map<String, String> login(@RequestBody UserLoginRequest loginRequest) {
+        Map<String, String> response = new HashMap<>();
+        response.put("Bearer", userService.verify(loginRequest));
+        response.put("Refresh", refreshTokenService.generateToken(loginRequest.getEmail()));
+        return response;
     }
 
     @PostMapping("/register")
@@ -77,4 +94,15 @@ public class AuthController {
         return userResponse.toString();
     }
 
+    @GetMapping("refresh-token")
+    public String refreshToken(@RequestBody RefreshJwtRequest refreshJwtRequest) {
+        UserDetails userDetails = applicationContext.getBean(CustomUserDetailsService.class).loadUserByUsername(refreshJwtRequest.getEmail());
+
+        if (refreshTokenService.validateToken(refreshJwtRequest.getRefreshToken(), userDetails)) {
+            return jwtService.generateToken(refreshJwtRequest.getEmail());
+        }
+        else {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid refresh token");
+        }
+    }
 }
