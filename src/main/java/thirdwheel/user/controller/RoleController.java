@@ -2,10 +2,13 @@ package thirdwheel.user.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import thirdwheel.user.dto.RoleAssighnmentRequest;
 import thirdwheel.user.entity.Role;
 import thirdwheel.user.entity.User;
+import thirdwheel.user.entity.UserPrincipal;
 import thirdwheel.user.entity.UserRole;
 import thirdwheel.user.repository.RoleRepository;
 import thirdwheel.user.repository.UserRepository;
@@ -15,7 +18,9 @@ import thirdwheel.user.service.UserRoleService;
 import thirdwheel.user.service.UserService;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("api/user")
@@ -44,16 +49,32 @@ public class RoleController {
         roleService.createRole(role);
     }
 
-    @GetMapping("/roles")
+    @GetMapping("/all-roles")
     @ResponseStatus(HttpStatus.OK)
     public List<Role> getAllRoles() {
         return roleRepository.findAll();
     }
 
+    @GetMapping("roles")
+    @ResponseStatus(HttpStatus.OK)
+    public Map<Long, String> getRoles() {
+        Object userPrincipal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        UserPrincipal currentUser = (UserPrincipal) userPrincipal;
+        User user = userRepository.findByEmail(currentUser.getUsername());
+        Map<Long, String> roles = new HashMap<>();
+        for (UserRole userRole : userRoleRepository.findUserRolesByUser(user)) {
+            roles.put(userRole.getRole().getRoleId(), userRole.getRole().getRoleName());
+        }
+        return roles;
+    }
+
     @PostMapping("/assign-role")
-    public void assignRole(@RequestBody RoleAssighnmentRequest roleAssighnmentRequest) {
-        System.out.println("Trying to assign role: " + roleAssighnmentRequest.toString());
-        userRoleService.assignRoleToUser(roleAssighnmentRequest.getUId(), roleAssighnmentRequest.getRId());
+    public ResponseEntity<Void> assignRole(@RequestBody RoleAssighnmentRequest roleAssighnmentRequest) {
+        if (getRoles().containsValue("ADMIN")) {
+            userRoleService.assignRoleToUser(roleAssighnmentRequest.getUId(), roleAssighnmentRequest.getRId());
+            return ResponseEntity.ok().build();
+        }
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
     }
 
     @GetMapping("/user-roles")
