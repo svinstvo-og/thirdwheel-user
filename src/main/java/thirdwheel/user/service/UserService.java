@@ -11,7 +11,6 @@ import thirdwheel.user.dto.UserLoginRequest;
 import thirdwheel.user.dto.UserRegistrationRequest;
 import thirdwheel.user.entity.Role;
 import thirdwheel.user.entity.User;
-import thirdwheel.user.jwt.JwtService;
 import thirdwheel.user.repository.RoleRepository;
 import thirdwheel.user.repository.UserRepository;
 

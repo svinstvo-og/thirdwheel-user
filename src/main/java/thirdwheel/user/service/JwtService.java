@@ -1,9 +1,12 @@
-package thirdwheel.user.jwt;
+package thirdwheel.user.service;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
@@ -15,20 +18,20 @@ import java.util.*;
 import java.util.function.Function;
 
 @Service
+@NoArgsConstructor
 public class JwtService {
 
-    String keyEncoded = "";
+    private JwtKeyService jwtKeyService;
 
-    public JwtService() throws NoSuchAlgorithmException {
-        KeyGenerator keyGenerator = KeyGenerator.getInstance("HmacSHA256");
-        SecretKey secretKey = keyGenerator.generateKey();
-        keyEncoded = Base64.getEncoder().encodeToString(secretKey.getEncoded());
+    @Autowired
+    public JwtService(JwtKeyService jwtKeyService) {
+        this.jwtKeyService = jwtKeyService;
     }
 
     public String generateToken(String email) {
         Map<String, Object> claims = new HashMap<>();
 
-        Key secretKey = getSecretKey();
+        Key secretKey = jwtKeyService.getSecretKey();
 
         //System.out.println(Arrays.toString(Decoders.BASE64.decode(keyEncoded)));
 
@@ -36,14 +39,9 @@ public class JwtService {
                 .claims(claims)
                 .subject(email)
                 .issuedAt(new Date())
-                .expiration(new Date(new Date().getTime() + 1000 * 60 * 60 * 24))
+                .expiration(new Date(new Date().getTime() + 1000 * 60 * 10)) //10min
                 .signWith(secretKey)
                 .compact();
-    }
-
-    private SecretKey getSecretKey() {
-        byte[] keyBytes = Decoders.BASE64.decode(keyEncoded);
-        return Keys.hmacShaKeyFor(keyBytes);
     }
 
     public String extractEmail(String token) {
@@ -58,7 +56,7 @@ public class JwtService {
 
     private Claims extractAllClaims(String token) {
         return Jwts.parser()
-                .verifyWith(getSecretKey())
+                .verifyWith(jwtKeyService.getSecretKey())
                 .build()
                 .parseSignedClaims(token)
                 .getPayload();
