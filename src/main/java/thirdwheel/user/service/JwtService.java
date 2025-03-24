@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+import thirdwheel.user.repository.UserRepository;
 
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
@@ -21,15 +22,18 @@ import java.util.function.Function;
 @NoArgsConstructor
 public class JwtService {
 
+    private UserRepository userRepository;
     private JwtKeyService jwtKeyService;
 
     @Autowired
-    public JwtService(JwtKeyService jwtKeyService) {
+    public JwtService(JwtKeyService jwtKeyService, UserRepository userRepository) {
         this.jwtKeyService = jwtKeyService;
+        this.userRepository = userRepository;
     }
 
     public String generateToken(String email) {
         Map<String, Object> claims = new HashMap<>();
+        claims.put("uid", userRepository.findByEmail(email).getUId());
 
         Key secretKey = jwtKeyService.getSecretKey();
 
