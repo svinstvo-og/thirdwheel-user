@@ -1,0 +1,36 @@
+spring:
+  application:
+    name: user
+  datasource:
+    url: jdbc:postgresql://localhost:5432/nakup-user
+    username: postgres
+    password: zxca
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+  # security:
+  #   user:
+  #     name: user
+  #     password: user
+  # logging:
+  #   level:
+  #     org:
+  #       springframework:
+  #         security: DEBUG
+  # jpa:
+  #   database-platform: org.hibernate.dialect.PostgreSQLDialect
+
+server:
+  port: 8092
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8090/eureka
+    register-with-eureka: true
+  instance:
+    app-name: user-service
+    instance-id: ${spring.application.name}:${random.value}
+    # FOR DOCKER K8S
+    # prefer-ip-address: true
