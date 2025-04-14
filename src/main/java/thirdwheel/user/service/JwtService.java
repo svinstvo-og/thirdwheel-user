@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.GetMapping;
 import thirdwheel.user.repository.UserRepository;
 
 import javax.crypto.KeyGenerator;
@@ -20,6 +21,7 @@ import java.util.function.Function;
 
 @Service
 @NoArgsConstructor
+@Getter
 public class JwtService {
 
     private UserRepository userRepository;
@@ -78,4 +80,7 @@ public class JwtService {
     private Date extractExpiration(String token) {
         return extractClaim(token, Claims::getExpiration);
     }
+
+    //FIX: development stage solution, not safe for deployment
+
 }

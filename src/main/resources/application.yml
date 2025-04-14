@@ -1,6 +1,6 @@
 spring:
   application:
-    name: user
+    name: user-service
   datasource:
     url: jdbc:postgresql://localhost:5432/nakup-user
     username: postgres

@@ -18,9 +18,11 @@ import thirdwheel.user.repository.RoleRepository;
 import thirdwheel.user.repository.UserRepository;
 import thirdwheel.user.repository.UserRoleRepository;
 import thirdwheel.user.service.CustomUserDetailsService;
+import thirdwheel.user.service.JwtKeyService;
 import thirdwheel.user.service.RoleService;
 import thirdwheel.user.service.UserService;
 
+import javax.crypto.SecretKey;
 import java.util.List;
 import java.util.Optional;
 
@@ -47,6 +49,9 @@ public class UserController {
 
     @Autowired
     private AuthenticationProvider authenticationProvider;
+
+    @Autowired
+    private JwtKeyService jwtKeyService;
 
     private final BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
 
@@ -84,7 +89,7 @@ public class UserController {
         System.out.println(user.getEmail() + " account details updated");
     }
 
-    @GetMapping("/get/all")
+    @GetMapping("/all")
     @ResponseStatus(HttpStatus.OK)
     public List<User> getAllUsers() {
         return userRepository.findAll();
@@ -109,7 +114,7 @@ public class UserController {
     @ResponseStatus(HttpStatus.OK)
     public String test() {
         return "testik";
-    };
+    }
 
     @PostMapping("/testik")
     @ResponseStatus(HttpStatus.ACCEPTED)
