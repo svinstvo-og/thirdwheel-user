@@ -11,6 +11,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.GetMapping;
 import thirdwheel.user.repository.UserRepository;
+import thirdwheel.user.repository.UserRoleRepository;
 
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
@@ -24,18 +25,22 @@ import java.util.function.Function;
 @Getter
 public class JwtService {
 
+    private UserRoleService userRoleService;
     private UserRepository userRepository;
     private JwtKeyService jwtKeyService;
+    private UserRoleRepository userRoleRepository;
 
     @Autowired
-    public JwtService(JwtKeyService jwtKeyService, UserRepository userRepository) {
+    public JwtService(JwtKeyService jwtKeyService, UserRepository userRepository, UserRoleService userRoleService) {
         this.jwtKeyService = jwtKeyService;
         this.userRepository = userRepository;
+        this.userRoleService = userRoleService;
     }
 
     public String generateToken(String email) {
         Map<String, Object> claims = new HashMap<>();
         claims.put("uid", userRepository.findByEmail(email).getUId());
+        claims.put("Roles", userRoleService.getUserRoles(userRepository.findByEmail(email)));
 
         Key secretKey = jwtKeyService.getSecretKey();
 
