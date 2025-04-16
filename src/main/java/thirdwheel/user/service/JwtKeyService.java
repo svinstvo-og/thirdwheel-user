@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
+import javax.crypto.SecretKeyFactory;
 import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
 
@@ -14,12 +15,14 @@ import java.util.Base64;
 @Service
 public class JwtKeyService {
 
-    private String keyEncoded = "";
+    // TODO make kay as env variable
+    private final String keyEncoded = "QevWIEc/vDDQjEuuEC+26f9d8RejWH/RYn0mhcrMZFY=";
 
     JwtKeyService() throws NoSuchAlgorithmException {
-        KeyGenerator keyGenerator = KeyGenerator.getInstance("HmacSHA256");
-        SecretKey secretKey = keyGenerator.generateKey();
-        keyEncoded = Base64.getEncoder().encodeToString(secretKey.getEncoded());
+        //logic for generating random keys
+//        KeyGenerator keyGenerator = KeyGenerator.getInstance("HmacSHA256");
+//        SecretKey secretKey = keyGenerator.generateKey();
+//        keyEncoded = Base64.getEncoder().encodeToString(secretKey.getEncoded());
     }
 
     public SecretKey getSecretKey() {
