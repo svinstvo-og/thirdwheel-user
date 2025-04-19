@@ -22,7 +22,7 @@ spring:
   #   database-platform: org.hibernate.dialect.PostgreSQLDialect
 
 server:
-  port: 8092
+  port: 8099
 
 eureka:
   client:
